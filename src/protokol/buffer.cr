@@ -1,15 +1,5 @@
 module Protokol
   class Buffer
-    MinUint32 =  0
-    MaxUint32 =  (1 << 32)-1
-    MinInt32  = -(1 << 31)
-    MaxInt32  =  (1 << 31)-1
-
-    MinUint64 =  0
-    MaxUint64 =  (1 << 64)-1
-    MinInt64  = -(1 << 63)
-    MaxInt64  =  (1 << 63)-1
-
     WIRES = {
       :int32    => 0,
       :uint32   => 0,
@@ -71,15 +61,15 @@ module Protokol
     end
 
     def initialize(buf="")
-      @buf = buf
+      @buf = String::Builder.new(buf)
     end
 
     def to_s
-      buf
+      buf.to_s
     end
 
     def to_str
-      buf
+      buf.to_s
     end
 
     def buf
@@ -87,7 +77,7 @@ module Protokol
     end
 
     def buf=(new_buf)
-      @buf = new_buf#.force_encoding("BINARY")
+      @buf = String::Builder.new(new_buf)
       @cursor = 0
     end
 
@@ -98,7 +88,11 @@ module Protokol
 
     def <<(bytes)
       # bytes = bytes.force_encoding("BINARY") if bytes.respond_to? :force_encoding
-      @buf += bytes
+      @buf.write(bytes)
+    end
+
+    def <<(str : String)
+      @buf.write(str.bytes)
     end
 
     def read(n)
@@ -117,3 +111,6 @@ module Protokol
     end
   end
 end
+
+require "./buffer/encode"
+require "./buffer/decode"
