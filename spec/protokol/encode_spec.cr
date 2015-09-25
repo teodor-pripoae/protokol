@@ -43,7 +43,6 @@ describe Protokol::Buffer do
     buf.buf = ""
     buf.append_fixed64(UInt64::MAX)
 
-    # puts buf.to_s.bytes
     buf.to_s.bytes.should eq([255, 255, 255, 255, 255, 255, 255, 255])#eq("\377\377\377\377\377\377\377\377")
   end
 
@@ -115,11 +114,14 @@ describe Protokol::Buffer do
     buf = Protokol::Buffer.new
     buf.append_float(3.14_f32)
     buf.to_s.bytes.should eq([195, 245, 72, 64])
+
+    buf.buf = ""
+    buf.append_float(0.5_f32)
+    buf.to_s.bytes.should eq([0, 0, 0, 63])
   end
 
   it ".append_double" do
     buf = Protokol::Buffer.new
-    buf.buf = ""
     buf.append_double(Math::PI)
     buf.to_s.bytes.should eq([24, 45, 68, 84, 251, 33, 9, 64])
   end
@@ -149,6 +151,10 @@ describe Protokol::Buffer do
     buf = Protokol::Buffer.new
     buf.append_sfixed32(-2)
     buf.to_s.bytes.should eq([3, 0, 0, 0])
+
+    buf.buf = ""
+    buf.append_sfixed32(456)
+    buf.to_s.bytes.should eq([144, 3, 0, 0])
   end
 
   it ".append_sint64" do
@@ -163,6 +169,10 @@ describe Protokol::Buffer do
     buf.buf = ""
     buf.append_sint64(Int64::MIN)
     buf.to_s.bytes.should eq([255, 255, 255, 255, 255, 255, 255, 255, 255, 1])
+
+    buf.buf = ""
+    buf.append_sfixed64(456)
+    buf.to_s.bytes.should eq([144, 3, 0, 0, 0, 0, 0, 0])
   end
 
   it ".append_sfixed64" do

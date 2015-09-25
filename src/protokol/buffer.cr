@@ -61,15 +61,16 @@ module Protokol
     end
 
     def initialize(buf="")
-      @buf = String::Builder.new(buf)
+      @cursor = 0
+      @buf = buf #String::Builder.new(buf)
     end
 
     def to_s
-      buf.to_s
+      buf#.to_s
     end
 
     def to_str
-      buf.to_s
+      buf#.to_s
     end
 
     def buf
@@ -77,7 +78,7 @@ module Protokol
     end
 
     def buf=(new_buf)
-      @buf = String::Builder.new(new_buf)
+      @buf = new_buf #String::Builder.new(new_buf)
       @cursor = 0
     end
 
@@ -87,27 +88,61 @@ module Protokol
     end
 
     def <<(bytes)
-      # bytes = bytes.force_encoding("BINARY") if bytes.respond_to? :force_encoding
-      @buf.write(bytes)
+      # Maybe use StringIO here ?
+      @buf += String.new(Slice.new(bytes.buffer, bytes.size))
     end
 
     def <<(str : String)
-      @buf.write(str.bytes)
+      @buf += str
     end
 
-    def read(n)
+    def read(n : Class)
+      n.decode(read_string)
+    end
+
+    def read(n : Symbol)
       case n
-      when Class
-        n.decode(read_string)
-      when Symbol
-        __send__("read_#{n}")
-      when Module
+      when :info
+        read_info
+      when :bytes
+        read_bytes
+      when :string
+        read_string
+      when :fixed32
+        read_fixed32
+      when :fixed64
+        read_fixed64
+      when :int32
+        read_int32
+      when :int64
+        read_int64
+      when :uint32
+        read_uint32
+      when :uint64
         read_uint64
+      when :sint32
+        read_sint32
+      when :sint64
+        read_sint64
+      when :sfixed32
+        read_sfixed32
+      when :sfixed64
+        read_sfixed64
+      when :float
+        read_float
+      when :double
+        read_double
+      when :bool
+        read_bool
       else
-        read_slice = buf.byteslice(@cursor, n)
-        @cursor += n
-        return read_slice
+        raise "type not found"
       end
+    end
+
+    def read(n : Int) : Array(UInt8)
+      read_slice = @buf.byte_slice(@cursor, n)
+      @cursor += n
+      return read_slice.bytes
     end
   end
 end
