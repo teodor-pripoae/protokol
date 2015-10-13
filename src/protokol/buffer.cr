@@ -87,13 +87,16 @@ module Protokol
       remain.bytesize
     end
 
-    def <<(bytes)
+    def <<(bytes : Array(UInt8))
       # Maybe use StringIO here ?
       @buf += String.new(Slice.new(bytes.buffer, bytes.size))
     end
 
     def <<(str : String)
       @buf += str
+    end
+
+    def <<(bytes : Nil)
     end
 
     def read(n : Class)

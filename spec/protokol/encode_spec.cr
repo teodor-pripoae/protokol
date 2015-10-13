@@ -19,7 +19,7 @@ describe Protokol::Buffer do
 
   it ".append_fixed32" do
     buf = Protokol::Buffer.new
-    buf.append_fixed32(1)
+    buf.append_fixed32(1_u32)
     buf.to_s.bytes.should eq([1, 0, 0, 0])
 
     buf.buf = ""
@@ -33,7 +33,7 @@ describe Protokol::Buffer do
 
   it ".append_fixed64" do
     buf = Protokol::Buffer.new
-    buf.append_fixed64(1)
+    buf.append_fixed64(1_u64)
     buf.to_s.should eq("\001\0\0\0\0\0\0\0")
 
     buf.buf = ""
@@ -48,7 +48,7 @@ describe Protokol::Buffer do
 
   it ".append_uint32" do
     buf = Protokol::Buffer.new
-    buf.append_uint32(1)
+    buf.append_uint32(1_u32)
     buf.to_s.should eq("\001")
 
     buf.buf = ""
@@ -98,7 +98,7 @@ describe Protokol::Buffer do
 
   it ".append_uint64" do
     buf = Protokol::Buffer.new
-    buf.append_uint64(1)
+    buf.append_uint64(1_u64)
     buf.to_s.bytes.should eq([1])
 
     buf.buf = ""
@@ -159,7 +159,7 @@ describe Protokol::Buffer do
 
   it ".append_sint64" do
     buf = Protokol::Buffer.new
-    buf.append_sint64(-2)
+    buf.append_sint64(-2_i64)
     buf.to_s.bytes.should eq([3])
 
     buf.buf = ""
@@ -171,7 +171,7 @@ describe Protokol::Buffer do
     buf.to_s.bytes.should eq([255, 255, 255, 255, 255, 255, 255, 255, 255, 1])
 
     buf.buf = ""
-    buf.append_sfixed64(456)
+    buf.append_sfixed64(456_i64)
     buf.to_s.bytes.should eq([144, 3, 0, 0, 0, 0, 0, 0])
   end
 
@@ -195,7 +195,7 @@ describe Protokol::Buffer do
 
   it ".append_bytes" do
     buf = Protokol::Buffer.new
-    buf.append_bytes("testing")
+    buf.append_bytes("testing".bytes)
     buf.to_s.bytes.should eq([7, 116, 101, 115, 116, 105, 110, 103])
   end
 end

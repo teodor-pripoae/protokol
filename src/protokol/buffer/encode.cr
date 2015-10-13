@@ -1,50 +1,29 @@
 module Protokol
   class Buffer
-
-    def append(ttype, val, fn)
-      if fn != 0
-        wire = Buffer.wire_for(ttype)
-        append_info(fn, wire)
-      end
-
-      __send__("append_#{ttype}", val)
+    def append_info(fn : Int32, wire : Int32)
+      x = (fn << 3) | wire
+      append_uint32(x.to_u32)
     end
 
-    def append_info(fn, wire)
-      append_uint32((fn << 3) | wire)
-    end
-
-    def append_fixed32(n, tag=false)
-      # if n < MinUint32 || n > MaxUint32
-        # raise OutOfRangeError.new(n)
-      # end
-
+    def append_fixed32(n : UInt32, tag=false)
       self << pack(n)
     end
 
-    def append_fixed64(n)
-      # if n < MinUint64 || n > UInt64::MAX
-        # raise OutOfRangeError.new(n)
-      # end
-
+    def append_fixed64(n : UInt64)
       self << pack(Int32.new(n & 0xFFFFFFFF))
       self << pack(Int32.new(n >> 32))
     end
 
-    def append_int32(n)
-      # if n < MinInt32 || n > MaxInt32
-        # raise OutOfRangeError.new(n)
-      # end
-
+    def append_int32(n : Int32)
       append_int64(Int64.new(n))
     end
 
-    def append_uint32(n)
+    def append_uint32(n : UInt32)
       # if n < MinUint32 || n > MaxUint32
         # raise OutOfRangeError.new(n)
       # end
 
-      append_uint64(Int64.new(n))
+      append_uint64(UInt64.new(n))
     end
 
     def append_int64(n : Int64)
@@ -61,7 +40,7 @@ module Protokol
       append_uint64(n.to_u64)
     end
 
-    def append_sint32(n)
+    def append_sint32(n : Int32)
       if n < 0
         append_uint32(((n + 1).abs.to_u32 << 1) + 1)
       else
@@ -69,7 +48,7 @@ module Protokol
       end
     end
 
-    def append_sfixed32(n)
+    def append_sfixed32(n : Int32)
       if n < 0
         append_fixed32(((n + 1).abs.to_u32 << 1) + 1)
       else
@@ -78,7 +57,7 @@ module Protokol
       # append_fixed32((n << 1) ^ (n >> 31))
     end
 
-    def append_sint64(n)
+    def append_sint64(n : Int64)
       if n < 0
         append_uint64(((n + 1).abs.to_u64 << 1) + 1)
       else
@@ -87,7 +66,7 @@ module Protokol
       # append_uint64((n << 1) ^ (n >> 63))
     end
 
-    def append_sfixed64(n)
+    def append_sfixed64(n : Int64)
       if n < 0
         append_fixed64(((n + 1).abs.to_u64 << 1) + 1)
       else
@@ -96,7 +75,7 @@ module Protokol
       # append_fixed64((n << 1) ^ (n >> 63))
     end
 
-    def append_uint64(n)
+    def append_uint64(n : UInt64)
       while true
         bits = UInt8.new(n & 0x7F)
         n >>= 7
@@ -107,25 +86,25 @@ module Protokol
       end
     end
 
-    def append_float(n)
+    def append_float(n : Float32)
       self << pack(n)
     end
 
-    def append_double(n)
+    def append_double(n : Float64)
       self << pack(n)
     end
 
-    def append_bool(n)
+    def append_bool(n : Bool)
       append_int64(n ? 1_i64 : 0_i64)
     end
 
-    def append_string(s)
-      append_uint64(s.bytes.to_a.size)
-      self << s.bytes
+    def append_string(s : String)
+      append_bytes(s.bytes)
     end
 
-    def append_bytes(s)
-      append_string(s)
+    def append_bytes(s : Array(UInt8))
+      append_uint64(s.to_a.size.to_u64)
+      self << s
     end
 
     def pack(value : Int8 | UInt8)

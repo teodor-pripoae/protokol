@@ -20,19 +20,19 @@ describe Protokol::Buffer do
 
   it ".read_fixed32" do
     buf = Protokol::Buffer.new
-    buf.append_fixed32(123)
-    buf.read_fixed32.should eq(123)
+    buf.append_fixed32(123_u32)
+    buf.read_fixed32.should eq(123_u32)
   end
 
   it ".read_fixed64" do
     buf = Protokol::Buffer.new
-    buf.append_fixed64(456_i64)
-    buf.read_fixed64.should eq(456_i64)
+    buf.append_fixed64(456_u64)
+    buf.read_fixed64.should eq(456_u64)
   end
 
   it ".read_uint32" do
     buf = Protokol::Buffer.new
-    buf.append_uint32(1)
+    buf.append_uint32(1_u32)
     buf.read_uint32.should eq(1)
   end
 
@@ -58,7 +58,7 @@ describe Protokol::Buffer do
 
   it ".read_uint64" do
     buf = Protokol::Buffer.new
-    buf.append_uint64(1)
+    buf.append_uint64(1_u64)
     buf.read_uint64.should eq(1)
   end
 
