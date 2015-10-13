@@ -73,14 +73,14 @@ module Protokol
       decode_zigzag(read_fixed64)
     end
 
-    def read_float : Float
+    def read_float32 : Float32
       bytes = read(4)
-      unpack_float(bytes)
+      unpack_float32(bytes)
     end
 
-    def read_double : Float64
+    def read_float64 : Float64
       bytes = read(8)
-      unpack_double(bytes)
+      unpack_float64(bytes)
     end
 
     def read_bool
@@ -101,12 +101,12 @@ module Protokol
       (pointerof(tuple) as UInt32*).value
     end
 
-    def unpack_float(bytes : Array(UInt8)) : Float
+    def unpack_float32(bytes : Array(UInt8)) : Float32
       tuple = {bytes[0], bytes[1], bytes[2], bytes[3]}
       (pointerof(tuple) as Float32*).value
     end
 
-    def unpack_double(bytes : Array(UInt8)) : Float64
+    def unpack_float64(bytes : Array(UInt8)) : Float64
       tuple = {bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]}
       (pointerof(tuple) as Float64*).value
     end

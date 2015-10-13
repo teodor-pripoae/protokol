@@ -62,16 +62,16 @@ describe Protokol::Buffer do
     buf.read_uint64.should eq(1)
   end
 
-  it ".read_float" do
+  it ".read_float32" do
     buf = Protokol::Buffer.new
-    buf.append_float(0.5_f32)
-    buf.read_float.should eq(0.5)
+    buf.append_float32(0.5_f32)
+    buf.read_float32.should eq(0.5)
   end
 
-  it ".read_double" do
+  it ".read_float64" do
     buf = Protokol::Buffer.new
-    buf.append_double(Math::PI)
-    buf.read_double.should eq(Math::PI)
+    buf.append_float64(Math::PI)
+    buf.read_float64.should eq(Math::PI)
   end
 
   it ".read_bool" do

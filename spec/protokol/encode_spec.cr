@@ -110,19 +110,19 @@ describe Protokol::Buffer do
     buf.to_s.bytes.should eq([255, 255, 255, 255, 255, 255, 255, 255, 255, 1])
   end
 
-  it ".append_float" do
+  it ".append_float32" do
     buf = Protokol::Buffer.new
-    buf.append_float(3.14_f32)
+    buf.append_float32(3.14_f32)
     buf.to_s.bytes.should eq([195, 245, 72, 64])
 
     buf.buf = ""
-    buf.append_float(0.5_f32)
+    buf.append_float32(0.5_f32)
     buf.to_s.bytes.should eq([0, 0, 0, 63])
   end
 
-  it ".append_double" do
+  it ".append_float64" do
     buf = Protokol::Buffer.new
-    buf.append_double(Math::PI)
+    buf.append_float64(Math::PI)
     buf.to_s.bytes.should eq([24, 45, 68, 84, 251, 33, 9, 64])
   end
 

@@ -10,12 +10,12 @@ module Protokol
       :bool     => 0,
       :fixed64  => 1,
       :sfixed64 => 1,
-      :double   => 1,
+      :float64  => 1,
       :string   => 2,
       :bytes    => 2,
       :fixed32  => 5,
       :sfixed32 => 5,
-      :float    => 5,
+      :float32  => 5,
     }
 
     def self.wire_for(ttype)
@@ -131,10 +131,10 @@ module Protokol
         read_sfixed32
       when :sfixed64
         read_sfixed64
-      when :float
-        read_float
-      when :double
-        read_double
+      when :float32
+        read_float32
+      when :float64
+        read_float64
       when :bool
         read_bool
       else

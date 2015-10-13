@@ -32,7 +32,7 @@ describe Protokol::Buffer do
     it "handles float types" do
       Protokol::Buffer.wire_for(:fixed64).should eq(1)
       Protokol::Buffer.wire_for(:sfixed64).should eq(1)
-      Protokol::Buffer.wire_for(:double).should eq(1)
+      Protokol::Buffer.wire_for(:float64).should eq(1)
     end
 
     it "handles string types" do
@@ -43,7 +43,7 @@ describe Protokol::Buffer do
     it "handles fixed types" do
       Protokol::Buffer.wire_for(:fixed32).should eq(5)
       Protokol::Buffer.wire_for(:sfixed32).should eq(5)
-      Protokol::Buffer.wire_for(:float).should eq(5)
+      Protokol::Buffer.wire_for(:float32).should eq(5)
     end
 
     it "raises error for unknown type" do

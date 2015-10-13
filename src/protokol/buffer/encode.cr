@@ -86,11 +86,11 @@ module Protokol
       end
     end
 
-    def append_float(n : Float32)
+    def append_float32(n : Float32)
       self << pack(n)
     end
 
-    def append_double(n : Float64)
+    def append_float64(n : Float64)
       self << pack(n)
     end
 
