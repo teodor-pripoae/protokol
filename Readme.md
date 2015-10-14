@@ -1,6 +1,6 @@
 ## Protocol Buffers for Crystal
 
-* This is Alpha version, only encoding works *
+**This is Alpha version, only encoding works**
 
 Inspired from [beefcake](github.com/protobuf-ruby/beefcake), test cases taken from there.
 
