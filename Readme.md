@@ -67,6 +67,7 @@ end
 ```
 
 ### TODO
-[ ] decoding
-[ ] code generation
-[ ] more test coverage
+
+- [ ] decoding
+- [ ] code generation
+- [ ] more test coverage
