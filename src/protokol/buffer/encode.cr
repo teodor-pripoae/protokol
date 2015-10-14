@@ -1,8 +1,51 @@
 module Protokol
   class Buffer
+    BUILTINS = {
+      "Int32" => [:int32, :sint32, :sfixed32],
+      "UInt32" => [:uint32, :fixed32],
+      "Int64" => [:int64, :sint64, :sfixed64],
+      "UInt64" => [:uint64, :fixed64],
+      "Float32" => [:float32],
+      "Float64" => [:float64],
+      "String" => [:string],
+      "Array(UInt8)" => [:bytes],
+      "Bool" => [:bool],
+      "Enum" => [:enum],
+      "Protokol::Message": [:message]
+    }
+
+    macro define_builtins
+      {% for klass, types in BUILTINS %}
+      def append(ttype : Symbol, field_order : Int32, value : {{ klass.id }})
+        if field_order != 0
+          append_info(field_order, Protokol::Buffer.wire_for(ttype))
+        end
+
+        case ttype
+        {% for t in types %}
+        when {{ t }}
+          append_{{ t.id }}(value)
+        {% end %}
+        else
+          raise WrongWireType.new({{ types }}, ttype)
+        end
+      end
+      {% end %}
+    end
+
+    define_builtins
+
     def append_info(fn : Int32, wire : Int32)
       x = (fn << 3) | wire
       append_uint32(x.to_u32)
+    end
+
+    def append_enum(n : Enum)
+      append_int32(n.value)
+    end
+
+    def append_message(n : Protokol::Message)
+      append_string(n.encode)
     end
 
     def append_fixed32(n : UInt32, tag=false)
@@ -19,24 +62,10 @@ module Protokol
     end
 
     def append_uint32(n : UInt32)
-      # if n < MinUint32 || n > MaxUint32
-        # raise OutOfRangeError.new(n)
-      # end
-
       append_uint64(UInt64.new(n))
     end
 
     def append_int64(n : Int64)
-      # if n < MinInt64 || n > MaxInt64
-        # raise OutOfRangeError.new(n)
-      # end
-
-      # if n < 0
-        # n = n.to_u64 #UInt64.new(n) | (1_u64 << 63)
-        # self << UInt8[128, 128, 128, 128, 128, 128, 128, 128, 128, 1]
-        # return
-      # end
-
       append_uint64(n.to_u64)
     end
 
@@ -54,7 +83,6 @@ module Protokol
       else
         append_fixed32(n.to_u32 << 1)
       end
-      # append_fixed32((n << 1) ^ (n >> 31))
     end
 
     def append_sint64(n : Int64)
@@ -63,7 +91,6 @@ module Protokol
       else
         append_uint64(n.to_u64 << 1)
       end
-      # append_uint64((n << 1) ^ (n >> 63))
     end
 
     def append_sfixed64(n : Int64)
@@ -72,7 +99,6 @@ module Protokol
       else
         append_fixed64(n.to_u64 << 1)
       end
-      # append_fixed64((n << 1) ^ (n >> 63))
     end
 
     def append_uint64(n : UInt64)
@@ -115,19 +141,16 @@ module Protokol
     def pack(value : Int16 | UInt16)
       b1, b2 = (pointerof(value) as {UInt8, UInt8}*).value
       UInt8[b1, b2]
-      # UInt[b2, b1]
     end
 
     def pack(value : Int32 | UInt32 | Float32)
       b1, b2, b3, b4 = (pointerof(value) as {UInt8, UInt8, UInt8, UInt8}*).value
       UInt8[b1, b2, b3, b4]
-      # UInt8[b4, b3, b2, b1]
     end
 
     def pack(value : Int64 | UInt64 | Float64)
       b1, b2, b3, b4, b5, b6, b7, b8 = (pointerof(value) as {UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8}*).value
       UInt8[b1, b2, b3, b4, b5, b6, b7, b8]
-      # UInt8[b8, b7, b6, b5, b4, b3, b2, b1]
     end
   end
 end

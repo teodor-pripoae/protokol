@@ -5,6 +5,12 @@ module Protokol
     end
   end
 
+  class WrongWireType < Exception
+    def initialize(expected, got)
+      super("Append called with wrong wire type, expected `#{expected}`, got: #{got}")
+    end
+  end
+
   class RequiredFieldNotSetError < Exception
     def initialize(name)
       super("Field #{name} is required but nil")

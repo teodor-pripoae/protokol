@@ -1,6 +1,7 @@
 module Protokol
   class Buffer
     WIRES = {
+      :enum     => 0,
       :int32    => 0,
       :uint32   => 0,
       :sint32   => 0,
@@ -16,6 +17,7 @@ module Protokol
       :fixed32  => 5,
       :sfixed32 => 5,
       :float32  => 5,
+      :message  => 2
     }
 
     def self.wire_for(ttype)
@@ -23,7 +25,7 @@ module Protokol
 
       if wire
         wire
-      elsif Class === ttype && encodable?(ttype)
+      elsif ttype.is_a?(String)
         2
       # elsif Module === ttype
         # 0
@@ -32,12 +34,12 @@ module Protokol
       end
     end
 
-    def self.encodable?(ttype)
-      return false if ! ttype.is_a?(Class)
-      # changed becouse crystal does not have this method
-      # ttype.public_method_defined?(:encode)
-      ttype.responds_to?(:encode)
-    end
+    # def self.encodable?(ttype)
+    #   return false if ! ttype.is_a?(Class)
+    #   # changed becouse crystal does not have this method
+    #   # ttype.public_method_defined?(:encode)
+    #   ttype.responds_to?(:encode)
+    # end
 
     class StandardError < Exception
     end

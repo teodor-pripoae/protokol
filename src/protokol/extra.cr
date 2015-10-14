@@ -4,3 +4,4 @@ alias SFixed32 = Int32
 alias SFixed64 = Int64
 alias Fixed32 = UInt32
 alias Fixed64 = UInt64
+alias Bytes = Array(UInt8)
