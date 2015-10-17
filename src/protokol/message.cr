@@ -65,6 +65,7 @@ module Protokol
 
     macro protokol(&block)
       FIELDS = [] of Int32
+      FIELD_NAMES = [] of Symbol
       DECODERS = {} of Int32 => Proc((self, Protokol::Buffer, Int32), Nil)
       {{ yield }}
 
@@ -122,6 +123,7 @@ module Protokol
 
     macro field(field_name, field_type, field_order, field_policy, packed=false)
       {% FIELDS << field_order %}
+      {% FIELD_NAMES << field_name %}
 
       def encode_{{field_order}}(buf : Protokol::Buffer)
         {% if field_type == :Bytes %}
@@ -212,6 +214,16 @@ module Protokol
       DECODERS[{{field_order}}] = -> (msg : self, buffer : Protokol::Buffer, wire : Int32) {
         msg.decode_{{field_order}}(buffer, wire)
       }
+
+
+      def ==(other : {{ @type }})
+        {% for field_name in FIELD_NAMES %}
+          unless self.{{field_name.id}} == other.{{field_name.id}}
+            return false
+          end
+        {% end %}
+        return true
+      end
 
       def encode(buf = Protokol::Buffer.new)
         {% for field_order in FIELDS.sort %}

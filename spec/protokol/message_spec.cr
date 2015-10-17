@@ -297,12 +297,14 @@ describe Protokol::Message do
       got.sint32.should eq(msg.sint32)
       got.fixed32.should eq(msg.fixed32)
       got.sfixed32.should eq(msg.sfixed32)
-      
+
       got.int64.should eq(msg.int64)
       got.uint64.should eq(msg.uint64)
       got.sint64.should eq(msg.sint64)
       got.fixed64.should eq(msg.fixed64)
       got.sfixed64.should eq(msg.sfixed64)
+
+      got.should eq(msg)
     end
   end
 end
