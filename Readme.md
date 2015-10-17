@@ -6,6 +6,7 @@ Inspired from [beefcake](github.com/protobuf-ruby/beefcake), test cases taken fr
 
 ### Usage
 
+#### Defining proto files
 ```crystal
 class NumericsMessage < Protokol::Message
   protokol do
@@ -64,6 +65,31 @@ class PackedRepeatedMessage < Protokol::Message
     repeated :a, :Int32, 1, packed: true
   end
 end
+```
+
+#### Encoding
+```crystal
+x = MyClass.new do |f|
+  f.str_field = "aaaa"
+  f.int32_field = 52
+  f.int32_arr = [42, 43, 44]
+  f.f64_field = 3.14139131
+end
+
+x.encode # => String
+```
+
+#### Decoding
+```crystal
+x = MyClass.new do |f|
+  f.str_field = "aaaa"
+  f.int32_field = 52
+  f.int32_arr = [42, 43, 44]
+  f.f64_field = 3.14139131
+end
+
+x2 = MyClass.decode(x.encode)
+x1 == x2 # => true
 ```
 
 ### TODO
