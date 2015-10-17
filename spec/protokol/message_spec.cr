@@ -80,6 +80,17 @@ class RepeatedNestedMessage < Protokol::Message
   end
 end
 
+class EnumsDefaultMessage < Protokol::Message
+  protokol do
+    enum X
+      A = 1
+      B = 2
+    end
+
+    optional :a, :X, 1, default: X::B
+  end
+end
+
 describe Protokol::Message do
   describe "assign" do
     describe "using builder" do
@@ -305,6 +316,56 @@ describe Protokol::Message do
       got.sfixed64.should eq(msg.sfixed64)
 
       got.should eq(msg)
+    end
+
+    it "raises error if type does not match" do
+      buf = Protokol::Buffer.new
+      buf.append(:string, 1, "testing")
+
+      expect_raises Protokol::WrongTypeError do
+        SimpleMessage.decode(buf.to_s)
+      end
+    end
+
+    it "decodes unknown field" do
+      buf = Protokol::Buffer.new
+      buf.append(:string, 2, "testing")
+
+      msg = SimpleMessage.decode(buf.to_s)
+
+      msg.a.should eq(nil)
+    end
+
+    it "decodes repeated message" do
+      msg = RepeatedMessage.new do |m|
+        m.a = [1, 2, 3, 4, 5]
+      end
+      got = RepeatedMessage.decode(msg.encode)
+
+      got.a.should eq(msg.a)
+      got.should eq(msg)
+    end
+
+    it "decodes packed repeated field" do
+      msg = PackedRepeatedMessage.new do |m|
+        m.a = [1, 2, 3, 4, 5]
+      end
+      got = PackedRepeatedMessage.decode(msg.encode)
+
+
+      got.a.should eq(msg.a)
+      got.should eq(msg)
+    end
+
+    it "decodes defaults" do
+      got = EnumsDefaultMessage.decode("")
+      got.a.should eq(EnumsDefaultMessage::X::B)
+    end
+
+    it "raises error if required fields are not present" do
+      expect_raises Protokol::RequiredFieldNotSetError do
+        NumericsMessage.decode("")
+      end
     end
   end
 end

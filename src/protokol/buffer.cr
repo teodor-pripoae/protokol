@@ -43,9 +43,14 @@ module Protokol
       end
     end
 
-    def initialize(buf="")
+    def initialize(buf="" : String)
       @cursor = 0
       @buf = buf #String::Builder.new(buf)
+    end
+
+    def initialize(bytes : Array(UInt8))
+      @cursor = 0
+      @buf = String.new(Slice.new(bytes.buffer, bytes.size))
     end
 
     def to_s

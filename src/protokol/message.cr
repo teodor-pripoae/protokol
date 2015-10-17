@@ -5,8 +5,13 @@ module Protokol
       "fixed64", "sfixed64", "float64", "string", "bytes", "fixed32", "sfixed32", "float32"
     ]
 
-    macro required(field_name, field_type, field_order, packed = false)
-      @{{field_name.id}} = nil
+    macro required(field_name, field_type, field_order, packed = false, default = nil)
+      {% if default %}
+        @{{field_name.id}} = {{ default }}
+      {% else %}
+        @{{field_name.id}} = nil
+      {% end %}
+
       def {{field_name.id}} : {{ field_type.id }}|Nil
         @{{field_name.id}}
       end
@@ -18,8 +23,12 @@ module Protokol
       field({{field_name}}, {{field_type}}, {{field_order}}, :required, {{packed}})
     end
 
-    macro optional(field_name, field_type, field_order, packed = false)
-      @{{field_name.id}} = nil
+    macro optional(field_name, field_type, field_order, packed = false, default = nil)
+      {% if default %}
+        @{{field_name.id}} = {{ default }}
+      {% else %}
+        @{{field_name.id}} = nil
+      {% end %}
 
       def {{field_name.id}} : {{ field_type.id }}|Nil
         @{{field_name.id}}
@@ -92,6 +101,8 @@ module Protokol
 
           decoder.call(msg, buf, wire)
         end
+
+        msg.validate!
 
         msg
       end
@@ -185,7 +196,8 @@ module Protokol
 
         {% if field_policy == :repeated && packed == true %}
           len = buf.read_uint64
-          tmp = Protokol::Buffer.new(buf.read(len).to_s)
+
+          tmp = Protokol::Buffer.new(buf.read(len))
 
           if self.{{field_name.id}}.nil?
             self.{{field_name.id}} = [] of {{ field_type.id }}
@@ -211,6 +223,14 @@ module Protokol
         nil
       end
 
+      def validate_{{field_order}}!
+        {% if field_policy == :required %}
+          if self.{{field_name.id}}.nil?
+            raise Protokol::RequiredFieldNotSetError.new({{field_name}})
+          end
+        {% end %}
+      end
+
       DECODERS[{{field_order}}] = -> (msg : self, buffer : Protokol::Buffer, wire : Int32) {
         msg.decode_{{field_order}}(buffer, wire)
       }
@@ -231,6 +251,12 @@ module Protokol
         {% end %}
 
         buf.to_s
+      end
+
+      def validate!
+        {% for field_order in FIELDS.sort %}
+          validate_{{field_order}}!
+        {% end %}
       end
     end
 
