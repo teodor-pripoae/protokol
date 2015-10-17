@@ -367,5 +367,50 @@ describe Protokol::Message do
         NumericsMessage.decode("")
       end
     end
+
+    it "decodes enum" do
+      msg = EnumsMessage.new do |m|
+        m.a = EnumsMessage::X::A
+      end
+      got = EnumsMessage.decode(msg.encode)
+      got.a.should eq(EnumsMessage::X::A)
+    end
+
+    it "decodes repeated nested field" do
+      simple = [
+        SimpleMessage.new{|x| x.a = 1},
+        SimpleMessage.new{|x| x.b = "hello"}
+      ]
+
+      msg = RepeatedNestedMessage.new{|x| x.simple = simple}.encode
+      got = RepeatedNestedMessage.decode(msg)
+
+      got.simple.size.should eq(2)
+      got.simple[0].a.should eq(1)
+      got.simple[1].b.should eq("hello")
+    end
+
+    it "checks equality" do
+      a = SimpleMessage.new{|x| x.a = 1}
+      b = SimpleMessage.new{|x| x.a = 1}
+      a.should eq(b)
+      c = SimpleMessage.new{|x| x.a = 2}
+      b.should_not eq(c)
+
+      d = EnumsMessage.new{|x| x.a = EnumsMessage::X::A}
+      e = EnumsDefaultMessage.new{|x| x.a = EnumsDefaultMessage::X::A}
+
+      d.should_not eq(e)
+      e.should_not eq(d)
+      d.should_not eq(:sumbol)
+      :symbol.should_not eq(d)
+    end
+
+    it "checks object_id" do
+      inside = [SimpleMessage.new{|x| x.a = 12345}]
+      outside = RepeatedNestedMessage.new{|x| x.simple = inside}
+
+      outside.simple.first.object_id.should eq(inside.first.object_id)
+    end
   end
 end
