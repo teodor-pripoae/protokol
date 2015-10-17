@@ -67,6 +67,19 @@ class PackedRepeatedMessage < Protokol::Message
   end
 end
 
+class LargeFieldNumberMessage < Protokol::Message
+  protokol do
+    required :field_1, :String, 1
+    required :field_2, :String, 100
+  end
+end
+
+class RepeatedNestedMessage < Protokol::Message
+  protokol do
+    repeated :simple, "SimpleMessage", 1
+  end
+end
+
 describe Protokol::Message do
   describe "assign" do
     describe "using builder" do
@@ -243,18 +256,53 @@ describe Protokol::Message do
       msg.encode.bytes.should eq([8, 5, 1, 2, 3, 4, 5])
     end
 
-    # it "encodes multiple inside one buffer" do
-    #   msg = SimpleMessage.new :a => 123, :b => "hi mom!"
-    #   str = ""
-    #
-    #   1000.times do
-    #     msg.write_delimited(str)
-    #   end
-    #
-    #   1000.times do
-    #     dec = SimpleMessage.read_delimited(str)
-    #     assert_equal msg, dec
-    #   end
-    # end
+    it "encodes large number field" do
+      msg = LargeFieldNumberMessage.new
+      msg.field_1 = "abc"
+      msg.field_2 = "123"
+
+      msg.encode.bytes.should eq([10, 3, 97, 98, 99, 162, 6, 3, 49, 50, 51])
+    end
+
+    it "encodes repeated" do
+      msg = RepeatedNestedMessage.new do |f|
+        f.simple = [SimpleMessage.new do |m|
+          m.b = "hello"
+        end]
+      end
+
+      msg.encode.bytes.should eq([10, 7, 18, 5, 104, 101, 108, 108, 111])
+    end
+  end
+
+  describe "decode" do
+    it "decodes numerics" do
+      msg = NumericsMessage.new do |f|
+        f.int32     = Int32::MAX
+        f.uint32    = UInt32::MAX
+        f.sint32    = Int32::MIN
+        f.fixed32   = Int32::MAX.to_u32
+        f.sfixed32  = Int32::MIN
+
+        f.int64     = Int64::MAX
+        f.uint64    = UInt64::MAX
+        f.sint64    = Int64::MIN
+        f.fixed64   = Int64::MAX.to_u64
+        f.sfixed64  = Int64::MIN
+      end
+      got = NumericsMessage.decode(msg.encode)
+
+      got.int32.should eq(msg.int32)
+      got.uint32.should eq(msg.uint32)
+      got.sint32.should eq(msg.sint32)
+      got.fixed32.should eq(msg.fixed32)
+      got.sfixed32.should eq(msg.sfixed32)
+      
+      got.int64.should eq(msg.int64)
+      got.uint64.should eq(msg.uint64)
+      got.sint64.should eq(msg.sint64)
+      got.fixed64.should eq(msg.fixed64)
+      got.sfixed64.should eq(msg.sfixed64)
+    end
   end
 end

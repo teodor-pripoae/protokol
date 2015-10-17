@@ -1,5 +1,14 @@
 require "../spec_helper"
 
+enum EnumTest
+end
+
+class Foo < Protokol::Message
+  protokol do
+    required :str_field, :String, 1
+  end
+end
+
 describe Protokol::Buffer do
   describe "simple" do
     it "handles empty buffer" do
@@ -44,6 +53,18 @@ describe Protokol::Buffer do
       Protokol::Buffer.wire_for(:fixed32).should eq(5)
       Protokol::Buffer.wire_for(:sfixed32).should eq(5)
       Protokol::Buffer.wire_for(:float32).should eq(5)
+    end
+
+    it "handles enums" do
+      Protokol::Buffer.wire_for(EnumTest).should eq(0)
+    end
+
+    it "handles classes as string" do
+      Protokol::Buffer.wire_for("Foo").should eq(2)
+    end
+
+    it "handles classes as class" do
+      Protokol::Buffer.wire_for(Foo).should eq(2)
     end
 
     it "raises error for unknown type" do

@@ -5,7 +5,7 @@ module Protokol
       fn   = n >> 3
       wire = n & 0x7
 
-      [fn, wire]
+      [fn.to_i32, wire.to_i32]
     end
 
     def read_bytes : Array(UInt8)
@@ -45,7 +45,7 @@ module Protokol
       n = shift = 0_u64
       while true
         if shift >= 64
-          raise BufferOverflowError.new("varint")
+          raise Protokol::BufferOverflowError.new("varint")
         end
         b = read(1).first.to_u64
 

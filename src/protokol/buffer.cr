@@ -25,35 +25,16 @@ module Protokol
 
       if wire
         wire
-      elsif ttype.is_a?(String)
+      elsif ttype.is_a?(String) || ttype.responds_to?(:decode)
         2
-      # elsif Module === ttype
-        # 0
+      elsif ttype.responds_to?(:is_enum?) && ttype.is_enum?
+        0
       else
         raise UnknownType.new(ttype)
       end
     end
 
-    # def self.encodable?(ttype)
-    #   return false if ! ttype.is_a?(Class)
-    #   # changed becouse crystal does not have this method
-    #   # ttype.public_method_defined?(:encode)
-    #   ttype.responds_to?(:encode)
-    # end
-
     class StandardError < Exception
-    end
-
-    class OutOfRangeError < StandardError
-      def initialize(n)
-        super("Value of of range: %d" % [n])
-      end
-    end
-
-    class BufferOverflowError < StandardError
-      def initialize(s)
-        super("Too many bytes read for %s" % [s])
-      end
     end
 
     class UnknownType < StandardError
@@ -85,8 +66,7 @@ module Protokol
     end
 
     def length
-      remain = buf.slice(@cursor..-1)
-      remain.bytesize
+      buf.bytesize - @cursor
     end
 
     def <<(bytes : Array(UInt8))
@@ -99,10 +79,6 @@ module Protokol
     end
 
     def <<(bytes : Nil)
-    end
-
-    def read(n : Class)
-      n.decode(read_string)
     end
 
     def read(n : Symbol)
@@ -148,6 +124,10 @@ module Protokol
       read_slice = @buf.byte_slice(@cursor, n)
       @cursor += n
       return read_slice.bytes
+    end
+
+    def read(n)
+      n.decode(read_string)
     end
   end
 end
