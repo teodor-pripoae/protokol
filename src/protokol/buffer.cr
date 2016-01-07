@@ -50,7 +50,7 @@ module Protokol
 
     def initialize(bytes : Array(UInt8))
       @cursor = 0
-      @buf = String.new(Slice.new(bytes.buffer, bytes.size))
+      @buf = String.new(Slice.new(bytes.to_unsafe, bytes.size))
     end
 
     def to_s
@@ -76,7 +76,7 @@ module Protokol
 
     def <<(bytes : Array(UInt8))
       # Maybe use StringIO here ?
-      @buf += String.new(Slice.new(bytes.buffer, bytes.size))
+      @buf += String.new(Slice.new(bytes.to_unsafe, bytes.size))
     end
 
     def <<(str : String)

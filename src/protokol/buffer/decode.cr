@@ -15,7 +15,7 @@ module Protokol
     def read_string : String
       # read_bytes.to_s
       bytes = read_bytes
-      String.new(Slice.new(bytes.buffer, bytes.size))
+      String.new(Slice.new(bytes.to_unsafe, bytes.size))
     end
 
     def read_fixed32 : UInt32
