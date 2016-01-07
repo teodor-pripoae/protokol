@@ -1,4 +1,6 @@
-## Protocol Buffers for Crystal
+#Protokol [![Build Status](https://travis-ci.org/teodor-pripoae/protokol.svg?branch=master)](https://travis-ci.org/teodor-pripoae/protokol)
+
+Protocol Buffers for Crystal
 
 **This is Alpha version, only encoding and decoding works**
 
