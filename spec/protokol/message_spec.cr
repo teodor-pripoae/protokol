@@ -28,7 +28,7 @@ end
 class LendelsMessage < Protokol::Message
   protokol do
     required :string, :String, 1
-    required :bytes,  :Bytes,  2
+    required :bytes,  :ByteList,  2
   end
 end
 

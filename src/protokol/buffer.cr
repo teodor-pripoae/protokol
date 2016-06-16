@@ -13,7 +13,7 @@ module Protokol
       :sfixed64 => 1,
       :float64  => 1,
       :string   => 2,
-      :bytes    => 2,
+      :bytelist => 2,
       :fixed32  => 5,
       :sfixed32 => 5,
       :float32  => 5,
@@ -43,7 +43,7 @@ module Protokol
       end
     end
 
-    def initialize(buf="" : String)
+    def initialize(buf : String = "")
       @cursor = 0
       @buf = buf #String::Builder.new(buf)
     end
@@ -90,7 +90,7 @@ module Protokol
       case n
       when :info
         read_info
-      when :bytes
+      when :bytelist
         read_bytes
       when :string
         read_string

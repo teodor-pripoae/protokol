@@ -50,7 +50,7 @@ module Protokol
 
       def {{field_name.id}} : Array({{field_type.id}})#|Nil
         val = @{{field_name.id}}
-        if val != nil
+        unless val.nil?
           val
         else
           [] of {{field_type.id}}
@@ -137,7 +137,7 @@ module Protokol
       {% FIELD_NAMES << field_name %}
 
       def encode_{{field_order}}(buf : Protokol::Buffer)
-        {% if field_type == :Bytes %}
+        {% if field_type == :ByteList %}
           values = [self.{{ field_name.id }}].compact
         {% else %}
           v = self.{{ field_name.id }}
@@ -183,7 +183,7 @@ module Protokol
         # Write temp buffer to current_buffer
         {% if packed == true %}
           buf.append_info({{ field_order }}, Protokol::Buffer.wire_for(wire_type))
-          buf.append_bytes(new_buf.to_s.bytes)
+          buf.append_bytelist(new_buf.to_s.bytes)
         {% end %}
       end
 
