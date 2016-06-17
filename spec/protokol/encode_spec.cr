@@ -193,9 +193,9 @@ describe Protokol::Buffer do
     expected.bytes.to_a.should eq(actual.bytes.to_a)
   end
 
-  it ".append_bytes" do
+  it ".append_bytelist" do
     buf = Protokol::Buffer.new
-    buf.append_bytes("testing".bytes)
+    buf.append_bytelist("testing".bytes)
     buf.to_s.bytes.should eq([7, 116, 101, 115, 116, 105, 110, 103])
   end
 end

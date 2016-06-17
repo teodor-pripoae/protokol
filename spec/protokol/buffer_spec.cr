@@ -46,7 +46,7 @@ describe Protokol::Buffer do
 
     it "handles string types" do
       Protokol::Buffer.wire_for(:string).should eq(2)
-      Protokol::Buffer.wire_for(:bytes).should eq(2)
+      Protokol::Buffer.wire_for(:bytelist).should eq(2)
     end
 
     it "handles fixed types" do

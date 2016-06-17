@@ -8,7 +8,7 @@ module Protokol
       "Float32" => [:float32],
       "Float64" => [:float64],
       "String" => [:string],
-      "Array(UInt8)" => [:bytes],
+      "Array(UInt8)" => [:bytelist],
       "Bool" => [:bool],
       "Enum" => [:enum],
       "Protokol::Message": [:message]
@@ -125,10 +125,10 @@ module Protokol
     end
 
     def append_string(s : String)
-      append_bytes(s.bytes)
+      append_bytelist(s.bytes)
     end
 
-    def append_bytes(s : Array(UInt8))
+    def append_bytelist(s : Array(UInt8))
       append_uint64(s.to_a.size.to_u64)
       self << s
     end
