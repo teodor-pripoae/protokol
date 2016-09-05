@@ -98,17 +98,17 @@ module Protokol
 
     def unpack32(bytes : Array(UInt8)) : UInt32
       tuple = {bytes[0], bytes[1], bytes[2], bytes[3]}
-      (pointerof(tuple) as UInt32*).value
+      (pointerof(tuple).as(UInt32*)).value
     end
 
     def unpack_float32(bytes : Array(UInt8)) : Float32
       tuple = {bytes[0], bytes[1], bytes[2], bytes[3]}
-      (pointerof(tuple) as Float32*).value
+      (pointerof(tuple).as(Float32*)).value
     end
 
     def unpack_float64(bytes : Array(UInt8)) : Float64
       tuple = {bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]}
-      (pointerof(tuple) as Float64*).value
+      (pointerof(tuple).as(Float64*)).value
     end
 
     private def decode_zigzag(n : UInt32) : Int32

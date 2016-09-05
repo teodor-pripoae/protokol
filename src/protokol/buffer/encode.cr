@@ -134,22 +134,22 @@ module Protokol
     end
 
     def pack(value : Int8 | UInt8)
-      b1 = (pointerof(value) as UInt8*).value
+      b1 = (pointerof(value).as(UInt8*)).value
       UInt8[b1]
     end
 
     def pack(value : Int16 | UInt16)
-      b1, b2 = (pointerof(value) as {UInt8, UInt8}*).value
+      b1, b2 = (pointerof(value).as({UInt8, UInt8}*)).value
       UInt8[b1, b2]
     end
 
     def pack(value : Int32 | UInt32 | Float32)
-      b1, b2, b3, b4 = (pointerof(value) as {UInt8, UInt8, UInt8, UInt8}*).value
+      b1, b2, b3, b4 = (pointerof(value).as({UInt8, UInt8, UInt8, UInt8}*)).value
       UInt8[b1, b2, b3, b4]
     end
 
     def pack(value : Int64 | UInt64 | Float64)
-      b1, b2, b3, b4, b5, b6, b7, b8 = (pointerof(value) as {UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8}*).value
+      b1, b2, b3, b4, b5, b6, b7, b8 = (pointerof(value).as({UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8}*)).value
       UInt8[b1, b2, b3, b4, b5, b6, b7, b8]
     end
   end
