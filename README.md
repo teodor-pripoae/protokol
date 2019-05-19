@@ -4,7 +4,7 @@ Protocol Buffers for Crystal
 
 **This is Alpha version, only encoding and decoding works**
 
-Inspired from [beefcake](github.com/protobuf-ruby/beefcake), test cases taken from there.
+Inspired from [beefcake](https://github.com/protobuf-ruby/beefcake), test cases taken from there.
 
 ### Usage
 
